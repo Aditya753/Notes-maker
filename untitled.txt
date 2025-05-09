@@ -1,0 +1,82 @@
+html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Simple Notes Maker</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #f0f0f0;
+      padding: 20px;
+    }
+    h1 { color: #333; }
+    textarea, input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+    }
+    button {
+      padding: 10px;
+      background: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .note {
+      background: white;
+      padding: 10px;
+      margin: 10px 0;
+      border-left: 4px solid #007bff;
+    }
+  </style>
+</head>
+<body>
+
+<h1>My Notes</h1>
+
+<input type="text" id="title" placeholder="Note Title">
+<textarea id="content" rows="5" placeholder="Write your note here..."></textarea>
+<button onclick="saveNote()">Save Note</button>
+
+<div id="notesList"></div>
+
+<script>
+function saveNote() {
+  let title = document.getElementById('title').value;
+  let content = document.getElementById('content').value;
+  if (title && content) {
+    let note = { title, content };
+    let notes = JSON.parse(localStorage.getItem('notes') || '[]');
+    notes.push(note);
+    localStorage.setItem('notes', JSON.stringify(notes));
+    showNotes();
+    document.getElementById('title').value = '';
+    document.getElementById('content').value = '';
+  }
+}
+
+function showNotes() {
+  let notes = JSON.parse(localStorage.getItem('notes') || '[]');
+  let html = '';
+  notes.forEach((n, i) => {
+    html += `
+      <div class="note">
+        <strong>${n.title}</strong><br>
+        <p>${n.content}</p>
+        <button onclick="deleteNote(${i})">Delete</button>
+      </div>`;
+  });
+  document.getElementById('notesList').innerHTML = html;
+}
+
+function deleteNote(index) {
+  let notes = JSON.parse(localStorage.getItem('notes') || '[]');
+  notes.splice(index, 1);
+  localStorage.setItem('notes', JSON.stringify(notes));
+  showNotes();
+}
+
+showNotes();
+</script>
+
+</body>
+</html>
